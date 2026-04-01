@@ -53,8 +53,8 @@ class RvRuby21 < Formula
     if OS.mac?
       args << "--enable-libedit"
       if Hardware::CPU.arm?
-        args << "--build=arm64-apple-darwin#{OS.kernel_version.to_s.split(".").first}"
-        args << "--host=arm64-apple-darwin#{OS.kernel_version.to_s.split(".").first}"
+        args << "--build=aarch64-apple-darwin#{OS.kernel_version.to_s.split(".").first}"
+        args << "--host=aarch64-apple-darwin#{OS.kernel_version.to_s.split(".").first}"
       end
     end
 
@@ -80,8 +80,6 @@ class RvRuby21 < Formula
     if OS.mac? && Hardware::CPU.arm?
       # Hardening the 'rm' command in the generated 'config.status'
       inreplace "configure", 'rm -f "$ac_file"', 'rm -f -- "$ac_file"'
-      # Fixing the architecture stripping in older Ruby configure
-      inreplace "configure", "sed 's/.*-apple-darwin/-darwin/'", "sed 's/-apple-darwin/-darwin/'"
     end
 
     system "./configure", *args
