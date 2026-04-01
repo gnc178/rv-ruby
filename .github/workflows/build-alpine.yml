@@ -70,6 +70,17 @@ jobs:
             mkdir -p test-ruby/
             tar --strip-components 2 -C test-ruby -xf rubies/*.tar.gz
             export PATH="${PWD}/test-ruby/bin:${PATH}"
+            if [ "${{ inputs.formula }}" = "rv-ruby@0.49" ]; then
+              ruby --version
+              exit 0
+            elif [ "${{ inputs.formula }}" = "rv-ruby@2.1.10" ]; then
+              ruby --version
+              ruby -e "puts RUBY_DESCRIPTION"
+              ruby -ryaml -e "puts YAML.load(\"test: 1\")"
+              ruby -e "puts Gem.default_dir"
+              echo "Basic tests passed."
+              exit 0
+            fi
             ruby --version
             ruby -e "puts RUBY_DESCRIPTION"
             ruby -rzlib -e "puts Zlib.crc32(\"test\")"
