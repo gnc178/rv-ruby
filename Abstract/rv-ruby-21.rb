@@ -51,9 +51,10 @@ class RvRuby21 < Formula
     ]
 
     if OS.mac?
+      arch = Hardware::CPU.arch.to_s == "arm64" ? "aarch64" : Hardware::CPU.arch.to_s
       args += %W[
         --enable-libedit
-        --build=#{Hardware::CPU.arch}-apple-darwin
+        --build=#{arch}-apple-darwin
       ]
     end
 
