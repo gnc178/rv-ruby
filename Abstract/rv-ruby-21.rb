@@ -51,11 +51,11 @@ class RvRuby21 < Formula
     ]
 
     if OS.mac?
-      args << "--enable-libedit"
-      if Hardware::CPU.arm?
-        args << "--build=aarch64-apple-darwin#{OS.kernel_version.to_s.split(".").first}"
-        args << "--host=aarch64-apple-darwin#{OS.kernel_version.to_s.split(".").first}"
-      end
+      arch = Hardware::CPU.arch.to_s == "arm64" ? "aarch64" : Hardware::CPU.arch.to_s
+      args += %W[
+        --enable-libedit
+        --build=#{arch}-apple-darwin
+      ]
     end
 
     if OS.linux?
@@ -76,11 +76,6 @@ class RvRuby21 < Formula
     ENV["cflags"] = ENV.delete("CFLAGS")
     ENV["cppflags"] = ENV.delete("CPPFLAGS")
     ENV["cxxflags"] = ENV.delete("CXXFLAGS")
-
-    if OS.mac? && Hardware::CPU.arm?
-      # Hardening the 'rm' command in the generated 'config.status'
-      inreplace "configure", 'rm -f "$ac_file"', 'rm -f -- "$ac_file"'
-    end
 
     system "./configure", *args
     system "make"
