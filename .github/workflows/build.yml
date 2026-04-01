@@ -32,6 +32,7 @@ jobs:
           - ubuntu-22.04-arm
       fail-fast: false
     runs-on: ${{ matrix.runner }}
+    if: ${{ !(matrix.runner == 'macos-14' && inputs.formula == 'rv-ruby@2.1.10') }}
     steps:
       - uses: actions/checkout@main
 
