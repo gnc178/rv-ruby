@@ -30,15 +30,18 @@ jobs:
           - macos-14 # arm
           - ubuntu-22.04
           - ubuntu-22.04-arm
+        formula: ["${{ inputs.formula }}"]
+        exclude:
+          - runner: macos-14
+            formula: rv-ruby@2.1.10
       fail-fast: false
     runs-on: ${{ matrix.runner }}
-    if: ${{ !(matrix.runner == 'macos-14' && inputs.formula == 'rv-ruby@2.1.10') }}
     steps:
       - uses: actions/checkout@main
 
       - name: Get version for setup-ruby
         run: |
-          SETUP_RUBY_VERSION=${{ inputs.formula }}
+          SETUP_RUBY_VERSION=${{ matrix.formula }}
           SETUP_RUBY_VERSION=${SETUP_RUBY_VERSION//rv-ruby}
           SETUP_RUBY_VERSION=${SETUP_RUBY_VERSION//@}
           if [[ "$SETUP_RUBY_VERSION" == "3.2."* ]]; then
@@ -73,12 +76,12 @@ jobs:
           fi
           mkdir -p rubies/
           cd rubies
-          brew rv-package --verbose ${{ inputs.formula }}
+          brew rv-package --verbose ${{ matrix.formula }}
 
       - name: Upload rv Ruby
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
-          name: ${{ inputs.formula }}_${{ matrix.runner }}
+          name: ${{ matrix.formula }}_${{ matrix.runner }}
           path: ${{ github.workspace }}/rubies
 
       - name: Generate build attestation
@@ -91,9 +94,9 @@ jobs:
           mkdir -p rv-ruby/
           tar --strip-components 2 -C rv-ruby -xf rubies/*.tar.gz
           export PATH="${PWD}/rv-ruby/bin:${PATH}"
-          if [[ "${{ inputs.formula }}" == "rv-ruby@0.49" ]]; then
+          if [[ "${{ matrix.formula }}" == "rv-ruby@0.49" ]]; then
             ruby --version
-          elif [[ "${{ inputs.formula }}" == "rv-ruby@2."* ]]; then
+          elif [[ "${{ matrix.formula }}" == "rv-ruby@2."* ]]; then
             ruby --version
             ruby -r bigdecimal -r json -r yaml -e "true"
           else
