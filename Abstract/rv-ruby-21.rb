@@ -55,8 +55,13 @@ class RvRuby21 < Formula
       args += %W[
         --enable-libedit
         --build=#{arch}-apple-darwin
+        --host=#{arch}-apple-darwin
+        --target=#{arch}-apple-darwin
       ]
     end
+
+    inreplace "Makefile.in", "$(RM) $(arch)-fake.rb", "$(RM) -- $(arch)-fake.rb"
+    inreplace "Makefile.in", "$(RM) fake.rb fake-rbconfig.rb", "$(RM) -- fake.rb fake-rbconfig.rb"
 
     if OS.linux?
       libffi = Formula[dep_names.find{|d| d.start_with?("portable-libffi") }]
