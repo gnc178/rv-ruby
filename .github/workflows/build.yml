@@ -92,6 +92,9 @@ jobs:
           export PATH="${PWD}/rv-ruby/bin:${PATH}"
           if [[ "${{ inputs.formula }}" == "rv-ruby@0.49" ]]; then
             ruby --version
+          elif [[ "${{ inputs.formula }}" == "rv-ruby@2.1.10" ]]; then
+            ruby --version
+            ruby -r bigdecimal -r json -r yaml -e "true"
           else
             ruby --version --yjit
             ruby -r debug -r bigdecimal -r json -r yaml -r reline -e "true"
