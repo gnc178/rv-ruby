@@ -11,5 +11,5 @@
   --with-libyaml-dir="${STATIC_DIR}" \
   --with-libffi-dir="${STATIC_DIR}" \
   --with-zlib-dir="${STATIC_DIR}" \
-  --with-out-ext=openssl,tk,win32,win32ole,digest/md5,digest/rmd160,digest/sha1,digest/sha2 \
+  --with-out-ext=openssl,tk,win32,win32ole,digest/md5,digest/rmd160,digest/sha1,digest/sha2,dbm,gdbm \
   --without-gmp
