@@ -51,7 +51,10 @@ class RvRuby21 < Formula
     ]
 
     if OS.mac?
-      args += %W[--enable-libedit]
+      args += %W[
+        --enable-libedit
+        --build=#{Hardware::CPU.arch}-apple-darwin
+      ]
     end
 
     if OS.linux?
@@ -90,10 +93,13 @@ class RvRuby21 < Formula
     end
 
     if OS.linux?
-      inreplace lib/"ruby/#{abi_version}/#{abi_arch}/rbconfig.rb" do |s|
-        s.gsub! ENV.cxx, "c++"
-        s.gsub! ENV.cc, "cc"
-        s.gsub!(/(CONFIG\[".+"\] = )"gcc-(.*)-\d+"/, '\\1"\\2"')
+      rbconfig = lib/"ruby/#{abi_version}/#{abi_arch}/rbconfig.rb"
+      if rbconfig.exist?
+        content = File.read(rbconfig)
+        content.gsub!(ENV.cxx, "c++") if ENV.cxx
+        content.gsub!(ENV.cc, "cc") if ENV.cc
+        content.gsub!(/(CONFIG\[".+"\] = )"gcc-(.*)-\d+"/, '\\1"\\2"')
+        File.write(rbconfig, content)
       end
     end
   end
