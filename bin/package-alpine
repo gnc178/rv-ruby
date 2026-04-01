@@ -197,16 +197,24 @@ echo "=== Verifying Ruby installation ==="
 "${INSTALL_PREFIX}/bin/ruby" --version
 "${INSTALL_PREFIX}/bin/ruby" -e 'puts "Ruby #{RUBY_VERSION} on #{RUBY_PLATFORM}"'
 
-# Verify JIT compiled (requires rust at build time)
-"${INSTALL_PREFIX}/bin/ruby" --yjit -e 'puts "YJIT: #{RubyVM::YJIT.enabled?}"'
-"${INSTALL_PREFIX}/bin/ruby" --zjit -e 'puts "ZJIT: #{RubyVM::ZJIT.enabled?}"' || echo "ZJIT: false"
+case "${VERSION}" in
+  2.*)
+    "${INSTALL_PREFIX}/bin/ruby" -ryaml -e 'puts "yaml: ok"'
+    echo "Skipping YJIT, zlib, openssl, readline, fiddle for 2.x"
+    ;;
+  *)
+    # Verify JIT compiled (requires rust at build time)
+    "${INSTALL_PREFIX}/bin/ruby" --yjit -e 'puts "YJIT: #{RubyVM::YJIT.enabled?}"'
+    "${INSTALL_PREFIX}/bin/ruby" --zjit -e 'puts "ZJIT: #{RubyVM::ZJIT.enabled?}"' || echo "ZJIT: false"
 
-# Verify statically linked extensions work
-"${INSTALL_PREFIX}/bin/ruby" -ryaml -e 'puts "yaml: ok"'
-"${INSTALL_PREFIX}/bin/ruby" -rfiddle -e 'puts "fiddle: ok"'
-"${INSTALL_PREFIX}/bin/ruby" -rzlib -e 'puts "zlib: ok"'
-"${INSTALL_PREFIX}/bin/ruby" -ropenssl -e 'puts "openssl: ok"'
-"${INSTALL_PREFIX}/bin/ruby" -rreadline -e 'puts "readline: ok"'
+    # Verify statically linked extensions work
+    "${INSTALL_PREFIX}/bin/ruby" -ryaml -e 'puts "yaml: ok"'
+    "${INSTALL_PREFIX}/bin/ruby" -rfiddle -e 'puts "fiddle: ok"'
+    "${INSTALL_PREFIX}/bin/ruby" -rzlib -e 'puts "zlib: ok"'
+    "${INSTALL_PREFIX}/bin/ruby" -ropenssl -e 'puts "openssl: ok"'
+    "${INSTALL_PREFIX}/bin/ruby" -rreadline -e 'puts "readline: ok"'
+    ;;
+esac
 
 # --- Package ---
 # rv expects tarballs with internal prefix: rv-ruby@{version}/{version}/
